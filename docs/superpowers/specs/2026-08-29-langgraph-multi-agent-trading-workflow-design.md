@@ -339,4 +339,3 @@ No new agent file may import an exchange executor or mutation method.
 ## Rollout
 
 Implement test-first in `agent-trader-source` using small reviewable commits, then apply equivalent content and tests to `multi-agent-trader` while preserving separate histories. The new graph becomes primary only after compatibility tests pass. Remove the callback-only graph and monolithic orchestration rather than maintaining two permanent implementations.
-
