@@ -287,7 +287,7 @@ class HedgeCoordinator:
                     open_submitted_at=evaluated_at,
                 )
                 transaction.put(cycle)
-                transaction.flush()
+                transaction.flush()  # intent exists before the external action
                 try:
                     execution = self.executor.open_hedge(
                         snapshot.symbol,
@@ -304,8 +304,8 @@ class HedgeCoordinator:
                             last_error=execution.error or "open order rejected",
                         )
                 except Exception as exc:
-
-
+                    # An I/O exception is ambiguous.  Keep OPEN_SUBMITTED and
+                    # reconcile CLOID + position before any future action.
                     execution_error = str(exc)
                     cycle = replace(
                         cycle,

@@ -1,4 +1,4 @@
-
+# hyperliquid_account_debug.py
 import json
 import os
 from typing import Any, Dict, List, Optional
@@ -94,27 +94,27 @@ def main() -> None:
     print(f"address={address}")
     print(f"base={base}")
 
-
+    # 1) 角色检查：是不是 agent / user / vault / subAccount
     role = try_call(base, {"type": "userRole", "user": address})
     pretty("userRole", role)
 
-
+    # 2) 主账户 perp 状态
     ch = try_call(base, {"type": "clearinghouseState", "user": address})
     pretty("clearinghouseState", ch)
 
-
+    # 3) 组合/统一账户相关
     portfolio = try_call(base, {"type": "portfolio", "user": address})
     pretty("portfolio", portfolio)
 
-
+    # 4) 子账户
     subs = try_call(base, {"type": "subAccounts", "user": address})
     pretty("subAccounts", subs)
 
-
+    # 5) vault
     uve = try_call(base, {"type": "userVaultEquities", "user": address})
     pretty("userVaultEquities", uve)
 
-
+    # 6) 如果有 vault，再逐个看
     vault_addresses: List[str] = []
     if uve.get("ok"):
         vault_addresses = extract_vault_addresses(uve["data"])
@@ -124,7 +124,7 @@ def main() -> None:
         vault_details[vaddr] = try_call(base, {"type": "vaultDetails", "vaultAddress": vaddr})
     pretty("vaultDetails", vault_details)
 
-
+    # 简要结论
     print("[summary]")
 
     role_data = role.get("data") if role.get("ok") else None

@@ -11,7 +11,7 @@ TEST_DIR = Path(__file__).resolve().parent
 if str(TEST_DIR) not in sys.path:
     sys.path.insert(0, str(TEST_DIR))
 
-from test_unified_market_agent_state_machine import (
+from test_unified_market_agent_state_machine import (  # noqa: E402
     FakeEngine,
     make_agent,
     make_all_positions_for_snapshot,

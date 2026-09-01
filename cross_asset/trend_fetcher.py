@@ -13,7 +13,7 @@ import requests
 
 try:
     from dotenv import load_dotenv
-except Exception:
+except Exception:  # pragma: no cover - optional dependency during isolated execution.
     load_dotenv = None
 
 
@@ -49,8 +49,8 @@ TREND_FETCHER_FLAT_THRESHOLD_PCT = max(
     float(os.getenv("TREND_FETCHER_FLAT_THRESHOLD_PCT", str(DEFAULT_FLAT_THRESHOLD_PCT)) or DEFAULT_FLAT_THRESHOLD_PCT),
 )
 
-
-
+# Lightweight dollar-strength proxy for frequent refreshes. This intentionally
+# uses only the two most informative FX legs instead of the full 6-pair DXY basket.
 SYNTHETIC_DXY_SCALE = 50.14348112
 SYNTHETIC_DXY_COMPONENTS = {
     "EUR/USD": -0.576,
@@ -1187,7 +1187,7 @@ class CrossAssetTrendFetcher:
     ) -> Dict[str, Any]:
         normalized_timeframes = normalize_timeframes(timeframes)
         base_needed = self._base_1m_bars_needed(normalized_timeframes, bars_per_timeframe)
-
+        # Small buffer helps when a source has sparse minutes.
         fetch_count = min(MAX_BASE_1M_BARS, base_needed + max(10, base_needed // 20))
         source_kind = detect_special_source(symbol_name)
         notes: List[str] = []

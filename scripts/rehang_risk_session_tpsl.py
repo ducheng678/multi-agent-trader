@@ -22,10 +22,10 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from unified_market_agent import UnifiedMarketAgent
-from market_agent.positions import snapshot_has_open_position
-from market_agent.symbols import canonicalize_execution_symbol
-from market_agent.utils import safe_float
+from unified_market_agent import UnifiedMarketAgent  # noqa: E402
+from market_agent.positions import snapshot_has_open_position  # noqa: E402
+from market_agent.symbols import canonicalize_execution_symbol  # noqa: E402
+from market_agent.utils import safe_float  # noqa: E402
 
 
 def _json_dump(value: Any) -> str:
@@ -235,8 +235,8 @@ def main() -> int:
     if args.execute and os.getenv("ENABLE_LIVE_TRADING", "false").strip().lower() not in {"1", "true", "yes", "on"}:
         raise RuntimeError("ENABLE_LIVE_TRADING is not true; refusing --execute")
 
-
-
+    # The script only needs REST reads/writes. Keep the user-fills websocket off
+    # so dry-runs and failures exit cleanly without background subscriptions.
     os.environ["ENABLE_HYPERLIQUID_USER_FILLS_WEBSOCKET"] = "false"
     agent = UnifiedMarketAgent("")
     agent._set_active_symbol(symbol, reason="rehang_risk_session_tpsl")

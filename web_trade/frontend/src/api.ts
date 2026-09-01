@@ -14,7 +14,7 @@ function writeStorage(storage: Storage, token: string): void {
   try {
     storage.setItem(TOKEN_KEY, token);
   } catch {
-
+    // Ignore storage failures, for example private browsing quota restrictions.
   }
 }
 
@@ -22,7 +22,7 @@ function removeStorage(storage: Storage): void {
   try {
     storage.removeItem(TOKEN_KEY);
   } catch {
-
+    // Ignore storage failures, for example private browsing quota restrictions.
   }
 }
 

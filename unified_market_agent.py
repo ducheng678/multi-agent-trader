@@ -1,4 +1,4 @@
-
+# ruff: noqa: F401
 import argparse
 import base64
 import json
@@ -254,7 +254,7 @@ class UnifiedMarketAgent(UserFillsMixin, TradeSymbolContextMixin, ExecutionLoopM
                 )
             ),
         )
-
+        # Legacy attribute retained for compatibility with older tests and payloads.
         self.max_planned_loss_usd = self.max_planned_loss_usd_fallback
         self.local_size_from_stop = str(os.getenv("LOCAL_SIZE_FROM_STOP", "true")).strip().lower() in {"1", "true", "yes", "on"}
         self.local_risk_tolerance_usd = max(0.0, float(os.getenv("LOCAL_RISK_TOLERANCE_USD", "1")))

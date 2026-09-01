@@ -1,4 +1,4 @@
-from watchers.free_sources import *
+from watchers.free_sources import *  # noqa: F403
 from watchers.free_sources import main
 
 

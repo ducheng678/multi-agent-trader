@@ -39,7 +39,7 @@ def html_to_text(html: str) -> str:
 
 
 def is_repost(post: dict) -> bool:
-
+    # Truth Social / Mastodon 风格：转发帖会带 reblog 字段
     return post.get("reblog") is not None
 
 
@@ -133,13 +133,13 @@ def download_images_for_post(post: dict, root_dir: Path = DOWNLOAD_ROOT) -> list
         filename = safe_filename(f"{i:02d}_{media_id}")
         dest_path = post_dir / f"{filename}{ext}"
 
-
+        # 避免重复下载同一个文件
         if dest_path.exists():
             saved_paths.append(dest_path)
             continue
 
         if not dest_path.suffix:
-
+            # 先无后缀下载，后面会根据 Content-Type 自动补后缀
             dest_path = post_dir / filename
 
         saved_path = download_binary_file(media_url, dest_path)
@@ -269,7 +269,7 @@ def main():
         print(f"[ERROR] failed to initialize Api: {e}")
         return
 
-
+    # warmup
     try:
         warmup_posts = safe_fetch_statuses(api, handle)
         if warmup_posts:
@@ -306,7 +306,7 @@ def main():
                 if shown >= 3:
                     break
 
-
+            # since_id 必须按“所有帖子”推进，不只是原创帖
             since_id = str(max(int(p["id"]) for p in warmup_posts))
             print(f"[warmup] chosen since_id = {since_id}")
         else:
@@ -328,7 +328,7 @@ def main():
         try:
             posts = safe_fetch_statuses(api, handle, since_id=since_id)
             if posts:
-
+                # 先推进 since_id，再过滤输出
                 since_id = str(max(int(p["id"]) for p in posts))
 
                 original_posts = [p for p in posts if not is_repost(p)]

@@ -519,7 +519,7 @@ function readableErrorMessage(exc: unknown, fallback: string): string {
     const detail = parsed.detail ?? parsed.message;
     if (typeof detail === 'string' && detail.trim()) return detail;
   } catch {
-
+    // The error is already plain text.
   }
   return raw;
 }
@@ -1750,7 +1750,7 @@ function LightweightChartPanel({
     try {
       event.currentTarget.setPointerCapture?.(event.pointerId);
     } catch {
-
+      // Pointer capture is best-effort; losing it only cancels this desktop drag.
     }
     desktopVerticalPanRef.current = {
       pointerId: event.pointerId,
@@ -1788,7 +1788,7 @@ function LightweightChartPanel({
     try {
       event.currentTarget.releasePointerCapture?.(event.pointerId);
     } catch {
-
+      // Ignore release failures when capture was not available.
     }
     desktopVerticalPanRef.current = null;
   }
@@ -2882,7 +2882,7 @@ function PositionsTable({
           : current
       );
     } catch {
-
+      // Keep the account snapshot limit visible if the realtime limit request fails.
     }
   }
 
@@ -3448,8 +3448,8 @@ export default function App() {
 
   useEffect(() => {
     void load();
-
-
+    // selectedSymbol changes are handled through explicit selection below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   async function selectMarket(symbol: string) {
@@ -3491,7 +3491,7 @@ export default function App() {
     try {
       setAccount(await fetchAccount(currentToken));
     } catch {
-
+      // Keep the current account snapshot if a background refresh fails.
     } finally {
       accountLoadingRef.current = false;
     }
@@ -3510,8 +3510,8 @@ export default function App() {
       void loadAccountHistory(token);
     }, 15000);
     return () => window.clearInterval(timer);
-
-
+    // loadAccountHistory uses a ref for in-flight state; this interval only needs token/tab changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeAccountTab, token]);
 
   useEffect(() => {
@@ -3520,8 +3520,8 @@ export default function App() {
       void loadAccountSnapshot(token);
     }, ACCOUNT_REFRESH_INTERVAL_MS);
     return () => window.clearInterval(timer);
-
-
+    // loadAccountSnapshot uses a ref for in-flight state; this interval only needs token changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   async function prefillPositionTrade(position: Position, action: PositionTradeAction) {

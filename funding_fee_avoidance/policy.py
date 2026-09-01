@@ -345,6 +345,6 @@ class FundingHedgePolicy:
         )
 
 
-
-
+# A narrow alias keeps imports readable while making the strategy change
+# explicit in documentation and output.
 FundingAvoidancePolicy = FundingHedgePolicy

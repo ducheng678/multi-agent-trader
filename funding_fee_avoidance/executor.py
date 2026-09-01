@@ -150,8 +150,8 @@ class HyperliquidHedgeExecutor:
             "timeout": self.config.http_timeout_seconds,
         }
         if self.config.hedge_account_kind == "subaccount":
-
-
+            # Hyperliquid's SDK names the action-routing field vault_address;
+            # _post_action serializes it as vaultAddress for subaccounts/vaults.
             kwargs["vault_address"] = self.hedge_address
         else:
             kwargs["vault_address"] = None
@@ -243,8 +243,8 @@ class HyperliquidHedgeExecutor:
             )
         is_buy = signed_size > 0
         limit_price = self._aggressive_ioc_price(exchange, canonical, is_buy)
-
-
+        # Metadata/mids and updateLeverage can consume the remaining window.
+        # Start action expiry only after those reads, immediately before POST.
         self._set_action_expiry(exchange, submit_deadline)
         raw = exchange.order(
             canonical,
@@ -282,8 +282,8 @@ class HyperliquidHedgeExecutor:
         exchange = self._ensure_exchange(canonical)
         is_buy = current_signed_size < 0
         limit_price = self._aggressive_ioc_price(exchange, canonical, is_buy)
-
-
+        # Set expiry after the price read so slow /info calls cannot consume
+        # the action's entire validity window.
         self._set_action_expiry(exchange)
         raw = exchange.order(
             canonical,

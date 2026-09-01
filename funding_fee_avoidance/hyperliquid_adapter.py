@@ -267,7 +267,7 @@ class HyperliquidSnapshotAdapter:
 
     def _ownership_verified(self, primary: str, hedge: str, errors: List[str]) -> bool:
         if self.config.hedge_account_kind == "wallet":
-
+            # The executor separately proves this by matching the signer address.
             return True
         try:
             raw = self.reader.post_info({"type": "subAccounts", "user": primary})
@@ -400,9 +400,9 @@ class HyperliquidSnapshotAdapter:
         except Exception as exc:
             abstraction = "unknown"
             errors.append(f"hedge account abstraction lookup failed: {exc}")
-
-
-
+        # In Standard mode, the dex-scoped clearinghouseState.withdrawable is
+        # meaningful.  Unified/portfolio balances require activeAssetData;
+        # this one-shot REST adapter therefore fails closed for new orders.
         margin_available_verified = abstraction == "disabled"
         if not margin_available_verified:
             errors.append(
@@ -552,8 +552,8 @@ class HyperliquidSnapshotAdapter:
                 errors.append(f"{symbol}: snapshot read failed: {exc}")
         return snapshots, errors
 
-
-
+    # Kept as a descriptive compatibility shim for callers of the first
+    # report-only prototype.  The returned objects now contain both accounts.
     def load_positions(
         self, observed_at: Optional[datetime] = None
     ) -> Tuple[List[HedgeSnapshot], List[str]]:

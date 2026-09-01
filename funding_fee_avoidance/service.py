@@ -47,7 +47,7 @@ class FundingHedgeService:
             execute=False,
         )
 
-
+    # Singular name retained for the offline CLI/API used by the first draft.
     evaluate_snapshot = evaluate_snapshots
 
     def run_once(
@@ -106,9 +106,9 @@ class FundingHedgeService:
                 continue
             selected_snapshot = snapshot
             if execute and preview.decision.action.value == "open_hedge":
-
-
-
+                # Re-read both positions, current funding, fees, margin and
+                # orders immediately before a position-changing open. The
+                # coordinator then performs a second wall-clock cutoff check.
                 refreshed_at = datetime.now(tz=UTC)
                 refreshed_cycles = self.store.load_all()
                 refreshed, refresh_errors = self.adapter.load_snapshots(
