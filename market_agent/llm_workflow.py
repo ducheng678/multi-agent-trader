@@ -1,8 +1,13 @@
+"""Compatibility-only facade for the pre-Harness LLM workflows."""
+
 from __future__ import annotations
 
 from typing import Any, Callable, Dict, TypedDict
 
 from langgraph.graph import END, START, StateGraph
+
+from market_agent.workflow_contracts import WorkflowRequest, WorkflowResult
+from market_agent.workflow_graph import CoordinatedWorkflow, WorkflowServices
 
 
 class WorkflowState(TypedDict, total=False):
@@ -62,9 +67,15 @@ def _build_passive_graph():
 
 
 class LLMWorkflow:
+    """Retain the legacy callable API while Harness execution lives elsewhere."""
+
     def __init__(self):
         self._single = _build_single_graph()
         self._passive = _build_passive_graph()
+        self._coordinated = CoordinatedWorkflow()
+
+    def invoke(self, request: WorkflowRequest, services: WorkflowServices) -> WorkflowResult:
+        return self._coordinated.invoke(request, services)
 
     def run_single(self, call: Callable[[], Any]) -> Any:
         return self._single.invoke({"call": call})["result"]
